@@ -15,7 +15,7 @@ model Product {
   tags        String[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  ProdComment ProdComment[]
+  ProdComment ProdComment[] 
 }
 
 model ProdComment {
@@ -23,7 +23,7 @@ model ProdComment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade) 
   productId String
 }
 
@@ -41,6 +41,6 @@ model ArtiComment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  article   Article  @relation(fields: [articleId], references: [id])
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   articleId String
 }
