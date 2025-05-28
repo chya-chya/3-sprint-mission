@@ -13,13 +13,12 @@ const prisma = new PrismaClient();
 const app = express();
 app.use(express.json());
 
-app.use('/product', productRouter);
-app.use('/article', articleRouter);
-app.use('/artiComment', artiCommentRouter);
-app.use('/prodComment', prodCommentRouter);
+app.use('', productRouter);
+app.use('', articleRouter);
+app.use('', artiCommentRouter);
+app.use('', prodCommentRouter);
 app.use('/file', fileRouter);
 app.use('/file', express.static('uploads'));
-
 
 app.use((err, req, res, next) => {
   console.log('****************************에러발생!****************************');
