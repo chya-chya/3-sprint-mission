@@ -6,6 +6,7 @@ import productRouter from './routes/product.js';
 import articleRouter from './routes/article.js';
 import artiCommentRouter from './routes/artiComment.js';
 import prodCommentRouter from './routes/prodComment.js';
+import fileRouter from './routes/file.js';
 
 const prisma = new PrismaClient();
 
@@ -16,11 +17,8 @@ app.use('/product', productRouter);
 app.use('/article', articleRouter);
 app.use('/artiComment', artiCommentRouter);
 app.use('/prodComment', prodCommentRouter);
-
-app.get('/error', (req, res, next) => {
-  throw new Error('의도적인 서버 에러 발생!'); // 500 에러 유발
-});
-
+app.use('/file', fileRouter);
+app.use('/file', express.static('uploads'));
 
 
 app.use((err, req, res, next) => {
