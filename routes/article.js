@@ -1,10 +1,10 @@
 import express from 'express';
-import { assert, StructError } from 'superstruct';
+// import { assert, StructError } from 'superstruct';
 import { PrismaClient } from '@prisma/client';
-import { 
-  CreateArticle,
-  PatchArticle 
-} from '../structs.js';
+// import { 
+//   CreateArticle,
+//   PatchArticle 
+// } from '../structs.js';
 
 const app = express();
 const prisma = new PrismaClient();
@@ -13,7 +13,14 @@ const articleRouter = express.Router();
 articleRouter.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   const article = await prisma.article.findUnique({
-     where: { id }
+    where: { id },
+    select: {
+    id: true,     
+    title: true,   
+    content: true,
+    createdAt: true,
+    updatedAt: false,
+    },
   });
   if (!article) {
     const err = new Error('ID를 찾을 수 없습니다.');
@@ -45,6 +52,13 @@ articleRouter.get('', async (req, res, next) => {
         { title: { contains: search }},
         { content: { contains: search }},
       ],
+    },
+    select: {
+    id: true,
+    title: true,   
+    content: true,
+    createdAt: true,
+    updatedAt: false,
     },
   });
   if (article.length === 0) {

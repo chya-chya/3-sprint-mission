@@ -13,7 +13,16 @@ const productRouter = express.Router();
 productRouter.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   const product = await prisma.product.findUnique({
-     where: { id }
+    where: { id },
+    select: {
+    id: true,
+    name: true, 
+    description: true,
+    price: true,
+    tags: true,
+    createdAt: true,
+    updatedAt: false,
+    },
   });
   if (!product) {
     const err = new Error('ID를 찾을 수 없습니다.');
@@ -45,6 +54,15 @@ productRouter.get('', async (req, res, next) => {
         { name: { contains: search }},
         { description: { contains: search }},
       ],
+    },
+    select: {
+    id: true,
+    name: true, 
+    description: false,
+    price: true,
+    tags: false,
+    createdAt: true,
+    updatedAt: false,
     },
   });
     if (product.length === 0) { // 에러 반환을 해야하나?
