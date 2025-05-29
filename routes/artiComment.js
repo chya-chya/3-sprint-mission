@@ -56,17 +56,21 @@ artiCommentRouter.route('/artiComment')
 
 artiCommentRouter.route('/artiComment/:id')
   .patch(async (req, res, next) =>{
-    const { id } = req.params;
-    const commnt = await prisma.ArtiComment.update({
-      where: { id: parseInt(id) },
-      data: req.body,
-    });
-      if (!commnt) {
-      const err = new Error('ID를 찾을 수 없습니다.');
-      err.status = 404;
-      return next(err);
-    };
-    res.send(commnt);
+    try {
+      const { id } = req.params;
+      const commnt = await prisma.ArtiComment.update({
+        where: { id: parseInt(id) },
+        data: req.body,
+      });
+        if (!commnt) {
+        const err = new Error('ID를 찾을 수 없습니다.');
+        err.status = 404;
+        return next(err);
+      };
+      res.send(commnt);
+    } catch {
+      next();
+    } 
   })
   .delete(async (req, res, next) => {
     try {
