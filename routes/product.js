@@ -44,7 +44,7 @@ productRouter.route('/product')
       },
     });
       if (product.length === 0) { // 에러 반환을 해야하나?
-        return res.send({ message : `${search}로 검색된 게시글이 없습니다.`});
+        return res.send({ message : `${search}로 검색된 게시글이 없습니다. (offset: ${offset})`});
     };
     res.send(product);
   })

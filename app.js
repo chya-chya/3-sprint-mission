@@ -20,6 +20,7 @@ app.use('', prodCommentRouter);
 app.use('/file', fileRouter);
 app.use('/file', express.static('uploads'));
 
+
 app.use((err, req, res, next) => {
   console.log('****************************에러발생!****************************');
   console.log(err);

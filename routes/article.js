@@ -42,7 +42,7 @@ articleRouter.route('/article')
       },
     });
     if (article.length === 0) {
-        return res.send({ message : `${search}로 검색된 게시글이 없습니다.`});
+        return res.send({ message : `${search}로 검색된 게시글이 없습니다. (offset: ${offset})`});
     };
     res.send(article);
   })

@@ -18,24 +18,32 @@ prodCommentRouter.get('/prodComment/all', async (req, res, next) => {
 
 prodCommentRouter.route('/prodComment')
   .get(async (req, res, next) => {
-    const comment = await prisma.prodComment.findMany({
+    let cursor = req.query.cursor ? parseInt(req.query.cursor) : undefined;
+    const findManyArgs = {
       take: 3,
       orderBy: {
         createdAt: 'asc'
       },
       select: {
-      id: true, 
-      content: true,
-      createdAt: true,
-      updatedAt: false,
+        id: true, 
+        content: true,
+        createdAt: true,
       },
-    });
-    if(comment[2]) {
-      console.log(`다음 커서는 ${comment[2].id + 1}입니다.`);
-    } else {
-      console.log('마지막 페이지 입니다.')
+    };
+    if (cursor) {
+      findManyArgs.cursor = { id: cursor };
+      findManyArgs.skip = 1;
     }
-    res.send(comment);
+    const comments = await prisma.prodComment.findMany(findManyArgs);
+    let message
+    if(comments[2]) {
+      console.log(`다음 커서는 ${comments[2].id}입니다.`);
+      message = `다음 커서는 ${comments[2].id}입니다.`;
+    } else {
+      console.log('다음 커서가 없습니다.')
+      message = '다음 커서가 없습니다.';
+    }
+    res.send({commnts: comments, message: message});
   })
   .post(async (req, res, next) => {
     const commnt = await prisma.prodComment.create({
@@ -70,7 +78,6 @@ prodCommentRouter.get('/prodComment/:cursor', async (req, res, next) => {
   const { cursor } = req.params;
   const comment = await prisma.prodComment.findMany({
     take: 3,
-    skip: 1,
     cursor: {
       id: parseInt(cursor),
     },

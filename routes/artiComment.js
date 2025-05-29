@@ -1,11 +1,5 @@
 import express from 'express';
-import { assert, StructError } from 'superstruct';
 import { PrismaClient } from '@prisma/client';
-import { 
-  CreateArticle,
-  PatchArticle 
-} from '../structs.js';
-import { skip } from '@prisma/client/runtime/library';
 
 const app = express();
 const prisma = new PrismaClient();
@@ -15,30 +9,38 @@ const artiCommentRouter = express.Router();
 
 artiCommentRouter.route('/artiComment')
   .get(async (req, res, next) => {
-    const comment = await prisma.ArtiComment.findMany({
+    let cursor = req.query.cursor ? parseInt(req.query.cursor) : undefined;
+    const findManyArgs = {
       take: 3,
       orderBy: {
         createdAt: 'asc'
       },
       select: {
-      id: true, 
-      content: true,
-      createdAt: true,
-      updatedAt: false,
+        id: true, 
+        content: true,
+        createdAt: true,
       },
-    });
-    if(comment[2]) {
-      console.log(`다음 커서는 ${comment[2].id + 1}입니다.`);
-    } else {
-      console.log('마지막 페이지 입니다.')
+    };
+    if (cursor) {
+      findManyArgs.cursor = { id: cursor };
+      findManyArgs.skip = 1;
     }
-    res.send(comment);
+    const comments = await prisma.ArtiComment.findMany(findManyArgs);
+    let message
+    if(comments[2]) {
+      console.log(`다음 커서는 ${comments[2].id}입니다.`);
+      message = `다음 커서는 ${comments[2].id}입니다.`;
+    } else {
+      console.log('다음 커서가 없습니다.')
+      message = '다음 커서가 없습니다.';
+    }
+    res.send({commnts: comments, message: message});
   })
   .post(async (req, res, next) => {
-    const artiComment = await prisma.ArtiComment.create({
+    const Comment = await prisma.ArtiComment.create({
       data: req.body,
     });
-    res.send(artiComment);
+    res.send(Comment);
   });
 
 artiCommentRouter.route('/artiComment/:id')
@@ -72,32 +74,6 @@ artiCommentRouter.route('/artiComment/:id')
     updatedAt: false,
     },
   });
-  res.send(comment);
-});
-
-artiCommentRouter.get('/artiComment/:cursor', async (req, res, next) => {
-  const { cursor } = req.params;
-  const comment = await prisma.ArtiComment.findMany({
-    take: 3,
-    skip: 1,
-    cursor: {
-      id: parseInt(cursor),
-    },
-    orderBy: {
-      createdAt: 'asc'
-    },
-    select: {
-    id: true, 
-    content: true,
-    createdAt: true,
-    updatedAt: false,
-    },
-  });
-  if(comment[2]) {
-    console.log(`다음 커서는 ${comment[2].id + 1}입니다.`);
-  } else {
-    console.log('마지막 페이지 입니다.')
-  }
   res.send(comment);
 });
 
