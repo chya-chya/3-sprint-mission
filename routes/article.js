@@ -105,11 +105,15 @@ articleRouter.route('/article/:id')
     }
   })
   .delete(async (req, res, next) => {
-    const { id } = req.params;
-    await prisma.article.delete({
-      where: { id },
-    });
-    res.sendStatus(204);
+    try {
+      const { id } = req.params;
+      await prisma.article.delete({
+        where: { id },
+      });
+      res.sendStatus(204);
+    } catch {
+      next()
+    }
   });
 
 

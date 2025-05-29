@@ -94,10 +94,10 @@ productRouter.route('/product/:id')
         where: { id },
         data: req.body,
       });
-        if (!product) {
-        const err = new Error('ID를 찾을 수 없습니다.');
-        err.status = 404;
-        return next(err);
+      if (!product) {
+      const err = new Error('ID를 찾을 수 없습니다.');
+      err.status = 404;
+      return next(err);
       };
       res.send(product);
     } catch (err) {
@@ -109,11 +109,15 @@ productRouter.route('/product/:id')
     }
   })
   .delete(async (req, res, next) => {
-    const { id } = req.params;
-    await prisma.product.delete({
-      where: { id },
-    });
-    res.sendStatus(204);
+    try {
+      const { id } = req.params;
+      await prisma.product.delete({
+        where: { id },
+      });
+      res.sendStatus(204);
+    } catch {
+      next()
+    }
   });
 
 

@@ -67,40 +67,16 @@ prodCommentRouter.route('/prodComment/:id')
     res.send(commnt);
   })
   .delete(async (req, res, next) => {
-    const { id } = req.params;
-    await prisma.prodComment.delete({
-      where: { id: parseInt(id) },
-    });
-    res.sendStatus(204);
+    try {
+      const { id } = req.params;
+      await prisma.prodComment.delete({
+        where: { id: parseInt(id) },
+      });
+      res.sendStatus(204);
+    } catch {
+      next();
+    }
   });
-
-prodCommentRouter.get('/prodComment/:cursor', async (req, res, next) => {
-  const { cursor } = req.params;
-  const comment = await prisma.prodComment.findMany({
-    take: 3,
-    cursor: {
-      id: parseInt(cursor),
-    },
-    orderBy: {
-      createdAt: 'asc'
-    },
-    select: {
-    id: true, 
-    content: true,
-    createdAt: true,
-    updatedAt: false,
-    },
-  });
-  if(comment[2]) {
-    console.log(`다음 커서는 ${comment[2].id + 1}입니다.`);
-  } else {
-    console.log('마지막 페이지 입니다.')
-  }
-  res.send(comment);
-});
-
-
-
 
 
 

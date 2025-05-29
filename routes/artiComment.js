@@ -5,6 +5,17 @@ const app = express();
 const prisma = new PrismaClient();
 const artiCommentRouter = express.Router();
 
+  artiCommentRouter.get('/artiComment/all', async (req, res, next) => {
+  const comment = await prisma.ArtiComment.findMany({
+    select: {
+    id: true, 
+    content: true,
+    createdAt: true,
+    updatedAt: false,
+    },
+  });
+  res.send(comment);
+});
 
 
 artiCommentRouter.route('/artiComment')
@@ -58,24 +69,17 @@ artiCommentRouter.route('/artiComment/:id')
     res.send(commnt);
   })
   .delete(async (req, res, next) => {
-    const { id } = req.params;
-    await prisma.ArtiComment.delete({
-      where: { id : parseInt(id) },
-    });
-    res.sendStatus(204);
+    try {
+      const { id } = req.params;
+      await prisma.ArtiComment.delete({
+        where: { id : parseInt(id) },
+      });
+      res.sendStatus(204);
+    } catch {
+      next();
+    }
   });
 
-  artiCommentRouter.get('/artiComment/all', async (req, res, next) => {
-  const comment = await prisma.ArtiComment.findMany({
-    select: {
-    id: true, 
-    content: true,
-    createdAt: true,
-    updatedAt: false,
-    },
-  });
-  res.send(comment);
-});
 
 
 
