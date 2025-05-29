@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
+import cors from 'cors';
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import productRouter from './routes/product.js';
@@ -10,7 +11,13 @@ import fileRouter from './routes/file.js';
 
 const prisma = new PrismaClient();
 
+const corsOptions = {
+  origin: ['http://127.0.0.1:3000', 'https://three-sprint-mission-4goe.onrender.com'],
+};
+
 const app = express();
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('', productRouter);
