@@ -29,8 +29,8 @@ productRouter.route('/product')
       take: parseInt(limit),
       where: {
         OR: [
-          { name: { contains: search}},
-          { description: { contains: search}},
+          { name: { contains: search, mode: 'insensitive' }},
+          { description: { contains: search, mode: 'insensitive' }},
         ],
       },
       select: {
