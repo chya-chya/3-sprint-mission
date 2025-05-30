@@ -9,9 +9,10 @@ const artiCommentRouter = express.Router();
   const comment = await prisma.ArtiComment.findMany({
     select: {
     id: true, 
+    articleId: true,
     content: true,
     createdAt: true,
-    updatedAt: false,
+    updatedAt: true,
     },
   });
   res.send(comment);
@@ -21,6 +22,7 @@ const artiCommentRouter = express.Router();
 artiCommentRouter.route('/artiComment')
   .get(async (req, res, next) => {
     let cursor = req.query.cursor ? parseInt(req.query.cursor) : undefined;
+    const articleId = req.query.articleId ? req.query.articleId : undefined;
     const findManyArgs = {
       take: 3,
       orderBy: {
@@ -30,6 +32,9 @@ artiCommentRouter.route('/artiComment')
         id: true, 
         content: true,
         createdAt: true,
+      },
+      where: {
+        articleId : articleId
       },
     };
     if (cursor) {

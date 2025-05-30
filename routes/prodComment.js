@@ -8,9 +8,10 @@ prodCommentRouter.get('/prodComment/all', async (req, res, next) => {
   const comment = await prisma.prodComment.findMany({
     select: {
     id: true, 
+    productId : true,
     content: true,
     createdAt: true,
-    updatedAt: false,
+    updatedAt: true,
     },
   });
   res.send(comment);
@@ -19,6 +20,7 @@ prodCommentRouter.get('/prodComment/all', async (req, res, next) => {
 prodCommentRouter.route('/prodComment')
   .get(async (req, res, next) => {
     let cursor = req.query.cursor ? parseInt(req.query.cursor) : undefined;
+    const productId = req.query.productId ? req.query.productId : undefined;
     const findManyArgs = {
       take: 3,
       orderBy: {
@@ -28,6 +30,9 @@ prodCommentRouter.route('/prodComment')
         id: true, 
         content: true,
         createdAt: true,
+      },
+      where: {
+        productId : productId
       },
     };
     if (cursor) {
